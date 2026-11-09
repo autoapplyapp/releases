@@ -1,2 +1,2 @@
 # releases
-Versions publiées d'AutoApply (exécutables Windows)
+Released versions of AutoApply (Windows executables)
