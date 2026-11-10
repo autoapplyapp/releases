@@ -1,0 +1,134 @@
+{
+  "_doc": "Tout ce qui depend du HTML d'Indeed. Quand Indeed change son interface, c'est ce fichier qu'on corrige, pas le code. Chaque libelle ci-dessous a ete releve sur le vrai site.",
+  "platform": "indeed",
+  "display_name": "Indeed",
+  "version": 1,
+
+  "urls": {
+    "home": "https://{domain}/",
+    "search": "https://{domain}/jobs",
+    "job": "https://{domain}/viewjob?jk={id}",
+    "login": "https://{domain}/account/login"
+  },
+
+  "search": {
+    "params": {
+      "query": "q",
+      "location": "l",
+      "radius_km": "radius",
+      "offset": "start",
+      "max_age_days": "fromage"
+    },
+    "page_size": 10,
+    "apply_only_params": { "iafilter": "1" },
+    "_apply_only_note": "Filtre 'candidature simplifiee'. L'ancien code sc=0kf:attr(DSQF7) etait perime depuis le 2026-09-10 (il vidait toute la recherche) ; Indeed passe maintenant par iafilter=1, releve le 2026-11-09. Il n'est plus dans 'sc', donc il se combine avec les filtres ci-dessous.",
+
+    "filters": {
+      "_note": "Filtres natifs d'Indeed, releves sur fr.indeed.com le 2026-11-09 en cochant chaque option et en lisant l'URL. Les codes ne sont pas devinables : si un filtre vide la recherche, recoller ici le code lu dans l'URL apres avoir coche l'option. 'Temps plein' et 'Temps partiel' ont le meme code dans les menus 'Type de contrat' et 'Horaires de travail' : ils ne sont listes qu'une fois, dans 'hours'.",
+      "param": "sc",
+      "prefix": "0kf:",
+      "groups": {
+        "contract": {
+          "label": "Type de contrat",
+          "options": {
+            "cdi":           { "label": "CDI",                         "code": "5QWDV" },
+            "cdd":           { "label": "CDD",                         "code": "T9BXE" },
+            "interim":       { "label": "Intérim",                     "code": "8YWGX" },
+            "alternance":    { "label": "Alternance",                  "code": "CPAHG" },
+            "apprentissage": { "label": "Contrat d'apprentissage",     "code": "QADT5" },
+            "stage":         { "label": "Stage",                       "code": "VDTG7" },
+            "freelance":     { "label": "Indépendant / freelance",     "code": "ZG59D" },
+            "courte_duree":  { "label": "Courte durée (jusqu'à 3 mois)", "code": "3BA2Q" }
+          }
+        },
+        "hours": {
+          "label": "Horaires de travail",
+          "options": {
+            "temps_plein":   { "label": "Temps plein",                 "code": "CF3CP" },
+            "temps_partiel": { "label": "Temps partiel",               "code": "75GKK" },
+            "journee":       { "label": "Travail en journée",          "code": "PMS5Q" },
+            "lundi_vendredi": { "label": "Du lundi au vendredi",       "code": "SAP7A" },
+            "heures_sup":    { "label": "Heures supplémentaires",      "code": "5WFZM" }
+          }
+        },
+        "education": {
+          "label": "Niveau d'études",
+          "options": {
+            "cap_bep":       { "label": "CAP / BEP",                   "code": "YFQM7" },
+            "bac":           { "label": "Niveau Bac",                  "code": "FCGTU" },
+            "bac2":          { "label": "Niveau Bac +2",               "code": "UTPWG" },
+            "licence":       { "label": "Niveau Licence",              "code": "HFDVW" },
+            "master":        { "label": "Master",                      "code": "EXSNN" }
+          }
+        }
+      },
+      "salary": {
+        "param": "salaryType",
+        "thresholds": [15000, 20000, 25000, 40000, 55000]
+      }
+    }
+  },
+
+  "results": {
+    "ready_selector": "[data-jk], .job_seen_beacon",
+    "_container_note": "Restreindre au conteneur des resultats est vital : quand une recherche ne donne rien, Indeed affiche a la place un bloc 'Emplois similaires a ceux consultes', avec exactement la meme structure HTML.",
+    "container": ["#mosaic-provider-jobcards", "#mosaic-jobResults", ".jobsearch-ResultsList"],
+    "cards": ["div.job_seen_beacon", "[data-testid='slider_item']", "li div.cardOutline", "td.resultContent"],
+    "id_attribute": "data-jk",
+    "id_href_pattern": "[?&]jk=([0-9a-zA-Z]+)",
+    "title": "h2.jobTitle span[title], h2.jobTitle, .jobTitle",
+    "company": "[data-testid='company-name'], .companyName",
+    "location": "[data-testid='text-location'], .companyLocation",
+    "empty_pattern": "ne donne aucun résultat|no results|aucune offre ne correspond",
+    "search_url_markers": ["/jobs", "q="]
+  },
+
+  "job_page": {
+    "apply_button_selectors": [
+      "#indeedApplyButton",
+      "[id*='indeedApplyButton']",
+      ".ia-IndeedApplyButton",
+      "[data-testid='indeedApplyButton']"
+    ],
+    "apply_button_labels": [
+      "Postuler sur Indeed",
+      "Postuler maintenant",
+      "Candidature simplifiee",
+      "Candidature simplifiée",
+      "Apply now",
+      "Apply on Indeed"
+    ],
+    "external_markers": [
+      "site de l'entreprise",
+      "site web de l'entreprise",
+      "company site",
+      "company website"
+    ]
+  },
+
+  "application": {
+    "continue_labels": [
+      "Continuer", "Continue", "Suivant", "Next", "Enregistrer et continuer",
+      "Continuer la candidature", "Etape suivante", "Étape suivante",
+      "Continuer vers", "Réviser", "Vérifier votre candidature"
+    ],
+    "_submit_note": "Volontairement restrictif : ces libelles declenchent un ENVOI reel et sont testes avant les libelles 'continuer' a chaque etape. Un motif large comme 'Envoyer' seul soumettrait une candidature au milieu du parcours. 'Deposer ma candidature' est le libelle reel du bouton final de SmartApply.",
+    "submit_labels": [
+      "Envoyer ma candidature", "Envoyer la candidature", "Envoyer votre candidature",
+      "Soumettre votre candidature", "Soumettre ma candidature",
+      "Déposer ma candidature", "Déposer votre candidature",
+      "Submit your application", "Submit application"
+    ],
+    "confirmation_markers": ["candidature envoy", "application submitted"],
+
+    "_resume_note": "Quand le profil est complet, Indeed saute droit a 'Relisez votre candidature' : aucun champ fichier, et le CV est celui du COMPTE. Le seul moyen d'en changer est le bouton 'Modifier' de la section CV, qui ouvre resume-selection-module, ou se trouve le champ fichier (cache, pdf/doc/docx) et un bouton 'Continuer' qui ramene a la relecture. Releve le 2026-11-09 en lecture seule.",
+    "resume": {
+      "section_labels": ["CV", "Resume", "Résumé"],
+      "edit_labels": ["Modifier", "Edit"]
+    },
+
+    "_ineligible_note": "Ecran ou Indeed juge que les reponses ne correspondent pas aux criteres de l'employeur, et propose 'Postuler quand meme'. Ce bouton ne doit JAMAIS etre clique automatiquement : ce serait contourner le filtre de l'employeur avec des reponses generees. Releve le 2026-09-15 sur une offre reelle.",
+    "ineligible_url_markers": ["questions-module/intervention"],
+    "ineligible_text_markers": ["ne répondiez pas aux critères"]
+  }
+}
